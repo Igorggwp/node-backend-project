@@ -1,4 +1,4 @@
-# Tecnologias Emergentes - Template 01
+# Projeto Backend Node
 
 Este projeto tem como objetivo proporcionar um ambiente prático para o desenvolvimento e treinamento na criação de APIs utilizando **Node.js** e **Express**. Com a crescente demanda por aplicações baseadas em arquitetura de micro-serviços e integrações via APIs.
 
