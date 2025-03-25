@@ -15,11 +15,14 @@ export const listUsers = async (req, res, next) => {
   try {
     const page = parseInt(req.query._page) || 1;
     const size = parseInt(req.query._size) || 10;
+    const sortField = req.query._sort || "name";
+    const sortOrder = req.query._order === "desc" ? -1 : 1;
 
     const offset = (page - 1) * size;
 
     const users = await User
       .find({})
+      .sort({ [sortField]: sortOrder })
       .skip(offset)
       .limit(size);
 
@@ -31,7 +34,7 @@ export const listUsers = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 export const createUser = async (req, res, next) => {
   try {
