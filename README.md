@@ -30,3 +30,7 @@ Para executar o projeto pode ser executado os comandos
 $ npm start
 $ npm run start:watch
 ```
+
+## Documentação da API no Postman
+
+- https://documenter.getpostman.com/view/30802807/2sAYkKJdKn
