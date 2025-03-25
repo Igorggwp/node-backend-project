@@ -1,12 +1,15 @@
 import { Router } from "express";
 
-import InternalServerError from "./routers/helpers/500.js"
-import NotFound from "./routers/helpers/404.js";
+import InternalServerError from "./routes/helper/500.js"
+import NotFound from "./routes/helper/404.js";
 
-import UserRouter from "./routers/userRouter.js";
+import UserRouter from "./routes/userRouter.js";
+
+const api = Router()
+  .use("/users/", UserRouter);
 
 const routes = Router()
-  .use("/api/user", UserRouter)
+  .use("/api/", api)
   .use(InternalServerError)
   .use(NotFound);
 

@@ -1,106 +1,65 @@
-import httpStatus from "http-status";
-import User from "../models/userModel.js"
+import User from "../models/userModel.js";
+
+export const showUser = async (req, res, next) => {
+  try {
+    const user = await User.findOne(req.params);
+
+    const data = res.hateos_item(user);
+    res.ok(data);
+  } catch (err) {
+    next(err);
+  }
+}
 
 export const listUsers = async (req, res, next) => {
   try {
-    const users = await User.find({});
-    res 
-      .status()
-      .json(users);
-  } catch (error) {
-    res 
-      .status(httpStatus.INTERNAL_SERVER_ERROR)
-      .json({
-        message: error.message,
-      });
+    const page = parseInt(req.query._page) || 1;
+    const size = parseInt(req.query._size) || 10;
+
+    const offset = (page - 1) * size;
+
+    const users = await User
+      .find({})
+      .skip(offset)
+      .limit(size);
+
+    const totalData = await User.countDocuments();
+    const totalPages = Math.ceil(totalData / size);
+
+    const data = res.hateos_list("users", users, totalPages);
+    res.ok(data);
+  } catch (err) {
+    next(err);
   }
-};
+}
 
 export const createUser = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
-    const newUser = new User({ name, email, password });
-    await newUser.save();
-    res
-      .status()
-      .json(newUser);
-  } catch (error) {
-    res
-    .status(httpStatus.INTERNAL_SERVER_ERROR)
-    .json({
-      message: error.message,
-    });
-  }
-};
+    await new User(req.body).save();
 
-export const updateUser = async (req, res, next) => {
+    res.created();
+  } catch (err) {
+    next(err);
+  }
+}
+
+export const editUser = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    const { name, email, password } = req.body;
-    const updatedUser = await User.findByIdAndUpdate(
-      id,
-      { name, email, password },
-      { new: true }
-    );
+    const user = await User.findOneAndUpdate(req.params, req.body, { new: true });
 
-    if (!updatedUser) {
-      return res
-        .status(httpStatus.NOT_FOUND)
-        .json({ message: "Usuário não encontrado" });
-    }
-    res
-      .status()
-      .json(updatedUser);
-  } catch (error) {
-    res
-      .status(httpStatus.INTERNAL_SERVER_ERROR)
-      .json({
-        message: error.message,
-      });
+    const data = res.hateos_item(user);
+    res.ok(data);
+  } catch (err) {
+    next(err);
   }
-};
-
-export const getUserById = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    const user = await User.findById(id);
-
-    if (!user) {
-      return res
-        .status(httpStatus.NOT_FOUND)
-        .json({ message: "Usuário não encontrado" });
-    }
-    res
-      .status()
-      .json(user);
-  } catch (error) {
-    res
-      .status(httpStatus.INTERNAL_SERVER_ERROR)
-      .json({
-        message: error.message,
-      });
-  }
-};
+}
 
 export const deleteUser = async (req, res, next) => {
   try {
-    const { id } = req.params;
+    await User.findByIdAndDelete(req.params._id);
 
-    const deletedUser = await User.findByIdAndDelete(id);
-
-    if (!deletedUser) {
-      return res
-        .status(httpStatus.NOT_FOUND)
-        .json({ message: "Usuário não encontrado" });
-    }
-    res
-      .status()
-      .json({ message: "Usuário excluido" });
-  } catch (error) {
-    res
-      .status(httpStatus.INTERNAL_SERVER_ERROR)
-      .json({
-        message: error.message,
-      });
+    res.no_content();
+  } catch (err) {
+    next(err);
   }
-};
+}
