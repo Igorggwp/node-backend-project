@@ -1,6 +1,25 @@
 import User from "../models/userModel.js";
+import crypto from "../utils/crypto.js";
+
+export const login = async (req, res, next) => {
+  /*
+  #swagger.tags = ["Login"]
+  */
+
+  req.user = await User.findOne({
+    email: req.body.email,
+    password: crypto(req.body.password),
+  });
+
+  next();
+}
 
 export const showUser = async (req, res, next) => {
+  /*
+  #swagger.tags = ["Users"]
+  #swagger.responses[200]
+  */
+
   try {
     const user = await User.findOne(req.params);
 
@@ -12,6 +31,11 @@ export const showUser = async (req, res, next) => {
 }
 
 export const listUsers = async (req, res, next) => {
+  /*
+  #swagger.tags = ["Users"]
+  #swagger.responses[200]
+  */
+
   try {
     const page = parseInt(req.query._page) || 1;
     const size = parseInt(req.query._size) || 10;
@@ -37,6 +61,15 @@ export const listUsers = async (req, res, next) => {
 };
 
 export const createUser = async (req, res, next) => {
+  /*
+  #swagger.tags = ["Users"]
+  #swagger.requestBody = {
+    required: true,
+    schema: { $ref: "#/components/schemas/User" }
+  }
+  #swagger.responses[201]
+  */
+
   try {
     await new User(req.body).save();
 
@@ -47,6 +80,15 @@ export const createUser = async (req, res, next) => {
 }
 
 export const editUser = async (req, res, next) => {
+  /*
+  #swagger.tags = ["Users"]
+  #swagger.requestBody = {
+    required: true,
+    schema: { $ref: "#/components/schemas/User" }
+  }
+  #swagger.responses[200]
+  */
+
   try {
     const user = await User.findOneAndUpdate(req.params, req.body, { new: true });
 
@@ -58,6 +100,11 @@ export const editUser = async (req, res, next) => {
 }
 
 export const deleteUser = async (req, res, next) => {
+  /*
+  #swagger.tags = ["Users"]
+  #swagger.responses[204]
+  */
+
   try {
     await User.findByIdAndDelete(req.params._id);
 

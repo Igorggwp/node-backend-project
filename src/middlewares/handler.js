@@ -13,9 +13,24 @@ export default (_, res, next) => {
     .status(httpStatus.NO_CONTENT)
     .send();
 
-  res.internal_server_error = (data) => res
-    .status(httpStatus.INTERNAL_SERVER_ERROR)
-    .json(data);
+  res.internal_server_error = (data) => {
+    /*
+    #swagger.responses[500] = {
+      schema: { $ref: "#/definitions/InternalServerError" }
+    }
+    */
+    res
+      .status(httpStatus.INTERNAL_SERVER_ERROR)
+      .json(data);
+  }
+
+  res.unauthorized = () => res
+    .status(httpStatus.UNAUTHORIZED)
+    .send();
+
+  res.forbidden = () => res
+    .status(httpStatus.FORBIDDEN)
+    .send();
 
   next();
 }

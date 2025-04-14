@@ -1,4 +1,5 @@
 export default (req, res, next) => {
+  // #swagger.ignore = true
   res.hateos_item = (data) => {
     return {
       ...data._doc,
@@ -12,6 +13,7 @@ export default (req, res, next) => {
   }
 
   res.hateos_list = (name, data, totalPages) => {
+    // #swagger.ignore = true
     const page = parseInt(req.query._page);
     const sortField = req.query._sort || "name";
 

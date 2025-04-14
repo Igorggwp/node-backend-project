@@ -1,18 +1,30 @@
 import { Router } from "express";
 
-import InternalServerError from "./routers/helpers/500.js"
-import NotFound from "./routers/helpers/404.js";
+import order from "./middlewares/order.js";
+import hateoas from "./middlewares/hateoas.js";
+import handler from "./middlewares/handler.js";
 
-import UserRouter from "./routers/userRouter.js";
-import ProductsRouter from "./routers/productRouter.js";
+import InternalServerError from "./routes/helper/500.js"
+import NotFound from "./routes/helper/404.js";
 
-const api = Router()
-  .use("/users/", UserRouter)
-  .use("/products/", ProductsRouter);
+import AuthRouter from "./routes/authRouter.js";
+import UserRouter from "./routes/userRouter.js";
+import ProductsRouter from "./routes/productRouter.js";
+import TaskRouter from "./routes/taskRouter.js";
 
-const routes = Router()
-  .use("/api/", api)
-  .use(InternalServerError)
-  .use(NotFound);
+import { verify } from "./controllers/authController.js";
+
+const routes = Router();
+routes.use(order);
+routes.use(hateoas);
+routes.use(handler);
+
+routes.use("/login", AuthRouter);
+routes.use("/api/users", verify, UserRouter);
+routes.use("/api/products/", ProductsRouter);
+routes.use("/api/tasks", TaskRouter);
+
+routes.use(InternalServerError);
+routes.use(NotFound);
 
 export default routes;
